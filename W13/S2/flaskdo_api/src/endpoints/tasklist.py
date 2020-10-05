@@ -70,6 +70,6 @@ def delete_tasklist(tasklist_id):
 def view_tasklists():
 
     # Retrieve the tasklist
-    tasklist = TaskList.objects(owner_id='1')
+    tasklist = TaskList.objects()
 
     return tasklist.to_json()
