@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+  <body>
+    <h2>Simple Add</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }} {% for error in form.number.errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+      <p><b>{{ form.number.label }}: </b> {{ form.number() }}</p>
+      <p>
+        <input type="submit" value="Submit" />
+      </p>
+    </form>
+  </body>
+</html>

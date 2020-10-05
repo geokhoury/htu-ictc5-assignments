@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+  <body>
+    <h2>Simple Divide</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }} {% for error in form.y.errors %}
+      <p>{{ error }}</p>
+      {% endfor %} {% for error in form.x.errors %}
+      <p>{{ error }}</p>
+      {% endfor %}
+      <p><b>{{ form.x.label }}: </b> {{ form.x() }}</p>
+      <p><b>{{ form.y.label }}: </b> {{ form.y() }}</p>
+      <p>
+        <input type="submit" value="Submit" />
+      </p>
+    </form>
+  </body>
+</html>
