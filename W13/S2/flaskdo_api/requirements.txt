@@ -1,0 +1,14 @@
+autopep8==1.5.4
+click==7.1.2
+Flask==1.1.2
+Flask-MongoAlchemy==0.7.2
+itsdangerous==1.1.0
+Jinja2==2.11.2
+MarkupSafe==1.1.1
+MongoAlchemy==0.19
+mongoengine==0.20.0
+passlib==1.7.2
+pycodestyle==2.6.0
+pymongo==3.11.0
+toml==0.10.1
+Werkzeug==1.0.1
