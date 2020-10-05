@@ -18,13 +18,15 @@ def create_task(tasklist_id):
         description = request.form['task-description']
 
         # create a task document
-        task = Task(title = title, description = description, tasklist_id = tasklist_id)
+        task = Task(title=title, description=description,
+                    tasklist_id=tasklist_id)
 
         # save the tasklist document
         task.save()
 
         # redirect to the index
-        return redirect(url_for('tasklists.view_tasklist', tasklist_id = tasklist_id))
+        return redirect(url_for('tasklists.view_tasklist', tasklist_id=tasklist_id))
+
 
 @bp.route('/task/delete/<string:tasklist_id>/<string:task_id>', methods=['GET'])
 @login_required
@@ -33,4 +35,4 @@ def delete_task(tasklist_id, task_id):
     task.remove()
 
     # redirect to the index
-    return redirect(url_for('tasklists.view_tasklist', tasklist_id = tasklist_id))
+    return redirect(url_for('tasklists.view_tasklist', tasklist_id=tasklist_id))

@@ -1,5 +1,6 @@
 from flask import Flask, request, Blueprint, render_template, redirect, session, url_for
 from ..models.user import User
+from ..models.task import Task
 
 # create a blueprint
 bp = Blueprint('user', __name__)
@@ -11,7 +12,7 @@ def signup():
     if request.method == 'GET':
         # render the signup template
         return render_template('login/signup.html')
-    
+
     # if HTTP method is POST
     else:
         # read values from the signup form submit
@@ -24,13 +25,14 @@ def signup():
 
         # create a user document
         user = User(first_name=first_name, last_name=last_name,
-                    username=username, email = email, password=password, address = address, tasklists=[])
-        
+                    username=username, email=email, password=password, address=address, tasklists=[])
+
         # save the user document
         user.save()
-        
+
         # render the login template
         return redirect('/login')
+
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -46,37 +48,52 @@ def login():
         # get User object based on the filter 'username'
         # User.username (DB) == username (form)
         user = User.query.filter(User.username == username).first()
-        
+        results = Task.query.filter(
+            {
+                '$or': [
+                    {Task.title: {"$regex": search_keyword}},
+                    {Task.description: {"$regex": search_keyword}}
+                ]
+            }
+        ).all()
+
+        print(len(results))
+        print("Results: " + str(results))
+
         # check the authentication based on the password from the form
         if user.authenticate(password):
             # add the serialized user object into the session
             session['user'] = user.serialized
             session['my_special_variable'] = 42
             session['is_logged_in'] = True
-            
+
             # render the index template
             return render_template('index.html')
-        
+
         # redirect to /403
         return redirect('/403')
 
-@bp.route('/logout')
+
+@ bp.route('/logout')
 def logout():
     # clear the session 'user' attribute
     session.clear()
-    
+
     # redirect to /
     return redirect(url_for('home.index'))
 
-@bp.route('/user/<int:user_id>')
+
+@ bp.route('/user/<int:user_id>')
 def view_user(user_id):
     pass
 
-@bp.route('/user/delete/<int:user_id>')
+
+@ bp.route('/user/delete/<int:user_id>')
 def delete_user(user_id):
     pass
 
-@bp.route('/user/edit/<int:user_id>')
+
+@ bp.route('/user/edit/<int:user_id>')
 def edit_user(user_id):
     pass
 
