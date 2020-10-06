@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+
+<html>
+  <body>
+    <h2>{{tasklist.name}}</h2>
+    <p>
+      {{tasklist.description}}
+    </p>
+    {% if tasklist['tasks'] %}
+    <p>
+      <h3>Tasks</h3>
+      <ul>
+        {% for task in tasklist['tasks'] %}
+        <li><a href="/task/{{task._id['$oid']}}">{{task.title}} - {{task.description}}</a></li>
+        {% endfor %}
+      </ul>
+    </p>
+    {% endif %}
+  </body>
+</html>

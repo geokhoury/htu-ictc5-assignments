@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html>
+  <body>
+    <h2>Task Lists</h2>
+    <p>
+      <ul>
+        {% for tasklist in tasklists %}
+        <li><a href="/tasklist/{{tasklist._id['$oid']}}">{{tasklist.name}}</a>
+        <p>{{tasklist.description}}</p>
+      </li>
+        {% endfor %}
+      </ul>
+    </p>
+  </body>
+</html>
