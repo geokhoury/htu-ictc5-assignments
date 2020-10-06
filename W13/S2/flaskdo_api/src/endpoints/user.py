@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from ..models import User
+from ..models import User, TaskList
 from mongoengine import *
 
 # define the blueprint
@@ -36,8 +36,22 @@ def login():
 
     # Authenticate the user
     if User.authenticate(username, password):
+        # Add user to session
+        session['user'] = user.to_json()
         response = {"msg": f"User {username} is now logged in."}
         return jsonify(response)
     else:
         response = {"msg": "Invalid credentials."}
         return jsonify(response)
+
+# add user tasklists function to the blueprint
+
+
+@user_blueprint.route('/tasklists', methods=['POST'])
+def user_tasklists():
+    data = request.get_json()
+
+    # Retrieve the tasklist
+    tasklists = TaskList.objects(owner_id=data['user_id']).all()
+
+    return tasklists.to_json()

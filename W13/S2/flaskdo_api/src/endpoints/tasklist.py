@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from ..models import TaskList
+from ..models import TaskList, Task
 from mongoengine import *
+import json
 
 # define the blueprint
 tasklist_blueprint = Blueprint(name="tasklist_blueprint", import_name=__name__)
@@ -28,12 +29,23 @@ def view_tasklist(tasklist_id):
     # Retrieve the tasklist
     tasklist = TaskList.objects(id=tasklist_id).first()
 
-    return tasklist.to_json()
+    # Find all tasks for this tasklist
+    tasks = Task.objects(tasklists__in=[tasklist]).all()
+
+    # Load JSON from DB into JSON object
+    json_tasklist = json.loads(tasklist.to_json())
+    json_tasks = {"tasks": json.loads(tasks.to_json())}
+
+    # Append tasks to tasklist
+    json_tasklist.update(json_tasks)
+
+    # Return JSON response
+    return jsonify(json.dumps(json_tasklist))
 
 # add create tasklist function to the blueprint
 
 
-@tasklist_blueprint.route('/create', methods=['POST'])
+@ tasklist_blueprint.route('/create', methods=['POST'])
 def create_tasklist():
     # Read JSON data from request from the client
     data = request.get_json()
@@ -42,16 +54,21 @@ def create_tasklist():
     tasklist = TaskList(
         name=data['name'],
         description=data['description'],
-        owner_id='1',
+        owner_id=data['user_id'],
         created_at=datetime.now()
     ).save()
 
+    # Create test tasks
+    task = Task(title="Demo task 1", description="First task on this list!",
+                created_at=datetime.now(), tasklists=[tasklist]).save()
+    task = Task(title="Demo task 2", description="Second task on this list!",
+                created_at=datetime.now(), tasklists=[tasklist]).save()
     return tasklist.to_json()
 
 # add delete tasklist function to the blueprint
 
 
-@tasklist_blueprint.route('/<tasklist_id>', methods=['delete'])
+@ tasklist_blueprint.route('/<tasklist_id>', methods=['delete'])
 def delete_tasklist(tasklist_id):
 
     # Retrieve the tasklist
@@ -66,10 +83,13 @@ def delete_tasklist(tasklist_id):
 # add view tasklists function to the blueprint
 
 
-@tasklist_blueprint.route('/all')
+@ tasklist_blueprint.route('/all')
 def view_tasklists():
 
     # Retrieve the tasklist
     tasklist = TaskList.objects()
+
+    # Find all pages Bob authored
+    tasklist.tasks = Task.objects(authors__in=[tasklist])
 
     return tasklist.to_json()
